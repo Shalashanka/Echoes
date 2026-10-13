@@ -54,11 +54,10 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, transparent, black 25%, black 70%, transparent);
 }
+/* comments drift gently in the side margins, never across the content */
 .bubble {
   position: absolute;
-  bottom: -60px;
   padding: 7px 13px;
   border-radius: 14px 14px 14px 4px;
   background: color-mix(in srgb, var(--surface) 70%, transparent);
@@ -67,22 +66,40 @@
   font-size: 13px;
   white-space: nowrap;
   backdrop-filter: blur(6px);
-  animation: rise linear infinite;
+  animation:
+    bubble-in 1.8s ease-out var(--in) both,
+    bubble-float var(--dur) ease-in-out var(--delay) infinite alternate;
 }
-@keyframes rise {
-  0% {
-    transform: translateY(0) rotate(-2deg);
+.bubble.right {
+  border-radius: 14px 14px 4px 14px;
+}
+@keyframes bubble-in {
+  from {
     opacity: 0;
+    translate: 0 12px;
   }
-  10% {
-    opacity: 0.9;
+  to {
+    opacity: var(--o);
+    translate: 0 0;
   }
-  85% {
-    opacity: 0.6;
+}
+@keyframes bubble-float {
+  from {
+    transform: translate(0, 0) rotate(-1deg);
   }
-  100% {
-    transform: translateY(-115vh) rotate(3deg);
-    opacity: 0;
+  to {
+    transform: translate(var(--dx), -14px) rotate(1deg);
+  }
+}
+@media (max-width: 1280px) {
+  .bubbles {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    animation: none !important;
+    opacity: var(--o);
   }
 }
 

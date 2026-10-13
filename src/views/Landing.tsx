@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { filesFromDrop } from '../lib/archive'
 import { Icon } from '../ui/Icon'
 import { Logo } from '../ui/Logo'
 import './landing.css'
@@ -17,6 +18,12 @@ const BUBBLES = [
   'The production on this 🔥',
   'My childhood right here',
   'Instant classic.',
+]
+
+/** [x%, y%] for each bubble: left and right margins only, clear of the hero and the drop zone */
+const SPOTS = [
+  [4, 16], [10, 30], [3, 44], [8, 57], [2, 71], [5, 86],
+  [96, 14], [90, 28], [97, 42], [92, 56], [98, 70], [95, 85],
 ]
 
 const TAKEOUT = 'https://takeout.google.com/settings/takeout/custom/youtube'
@@ -42,8 +49,9 @@ export function Landing({ onFiles, onDemo, busy, error }: { onFiles: (f: File[])
       e.preventDefault()
       depth = 0
       setOver(false)
-      const files = [...(e.dataTransfer?.files ?? [])]
-      if (files.length) onFiles(files)
+      if (!e.dataTransfer) return
+      // must start synchronously inside the drop event: the DataTransfer is emptied afterwards
+      void filesFromDrop(e.dataTransfer).then((files) => files.length && onFiles(files))
     }
     window.addEventListener('dragenter', enter)
     window.addEventListener('dragleave', leave)
@@ -65,11 +73,29 @@ export function Landing({ onFiles, onDemo, busy, error }: { onFiles: (f: File[])
         <div className="orb c" />
       </div>
       <div className="bubbles" aria-hidden>
-        {BUBBLES.map((b, i) => (
-          <span key={i} className="bubble" style={{ left: `${(i * 83) % 100}%`, animationDelay: `${-i * 2.3}s`, animationDuration: `${22 + (i % 5) * 4}s` }}>
-            {b}
-          </span>
-        ))}
+        {BUBBLES.map((b, i) => {
+          const [x, y] = SPOTS[i]
+          const right = x > 50
+          return (
+            <span
+              key={i}
+              className={`bubble ${right ? 'right' : ''}`}
+              style={
+                {
+                  [right ? 'right' : 'left']: `${right ? 100 - x : x}%`,
+                  top: `${y}%`,
+                  '--o': 0.45 + (i % 3) * 0.15,
+                  '--in': `${0.3 + i * 0.12}s`,
+                  '--dur': `${9 + (i % 4) * 2.5}s`,
+                  '--delay': `${-i * 1.7}s`,
+                  '--dx': `${i % 2 ? 10 : -10}px`,
+                } as CSSProperties
+              }
+            >
+              {b}
+            </span>
+          )
+        })}
       </div>
 
       <header className="landing-top">
@@ -110,7 +136,7 @@ export function Landing({ onFiles, onDemo, busy, error }: { onFiles: (f: File[])
             type="file"
             hidden
             multiple
-            accept=".zip,.csv,.html,.htm"
+            accept=".zip,.tgz,.gz,.tar,.csv,.html,.htm"
             onChange={(e) => {
               const f = [...(e.target.files ?? [])]
               e.target.value = ''
@@ -131,7 +157,7 @@ export function Landing({ onFiles, onDemo, busy, error }: { onFiles: (f: File[])
                 </motion.div>
                 <div className="drop-title">{over ? 'Drop it like it’s hot' : 'Drop your Google Takeout here'}</div>
                 <div className="drop-sub">
-                  the <b>.zip</b>, or <b>comments.csv</b> / <b>my-comments.html</b> from inside it
+                  every <b>.zip</b> / <b>.tgz</b> part at once, the extracted <b>Takeout</b> folder, or the comment <b>.csv</b> files from inside it — any language
                 </div>
               </motion.div>
             )}

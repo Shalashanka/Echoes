@@ -252,7 +252,7 @@ export function Explorer({
               type="file"
               hidden
               multiple
-              accept=".zip,.csv,.html,.htm"
+              accept=".zip,.tgz,.gz,.tar,.csv,.html,.htm"
               onChange={(e) => {
                 const f = [...(e.target.files ?? [])]
                 e.target.value = ''

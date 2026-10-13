@@ -17,7 +17,7 @@ const WEEK = 7 * 24 * 3600 * 1000
 
 export const thumb = (id: string, q: 'mq' | 'hq' = 'mq') => `https://i.ytimg.com/vi/${id}/${q}default.jpg`
 export const watchUrl = (videoId: string, commentId?: string) =>
-  `https://www.youtube.com/watch?v=${videoId}${commentId && !commentId.includes('-') ? `&lc=${commentId}` : ''}`
+  `https://www.youtube.com/watch?v=${videoId}${commentId && /^Ug[\w-]+(\.[\w-]+)?$/.test(commentId) ? `&lc=${commentId}` : ''}`
 
 async function load() {
   if (loaded) return

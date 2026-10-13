@@ -111,6 +111,8 @@ a {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    /* otherwise infinite loops replay every 0.01ms and flicker */
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }

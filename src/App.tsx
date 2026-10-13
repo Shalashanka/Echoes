@@ -37,9 +37,10 @@ export default function App() {
       setError(null)
       setBusy('Reading your export…')
       try {
-        const { echoes, files: used } = await importFiles(files, setBusy)
+        const { echoes, files: used, gaps } = await importFiles(files, setBusy)
         if (!echoes.length) {
-          const msg = 'No comments found in that file. Make sure the Takeout includes YouTube → comments (the file is called comments.csv or my-comments.html).'
+          const msg =
+            'No comments found in that file. Make sure the Takeout includes YouTube → comments, and if Google split the export into several .zip files, drop them all at once.'
           setError(msg)
           if (merge) toast('No comments found in that file', 'x')
           return
@@ -55,6 +56,7 @@ export default function App() {
         window.scrollTo({ top: 0 })
         setData(ds)
         toast(`Loaded ${fmtNum(all.length)} comments`)
+        if (gaps.length) setTimeout(() => toast(`${gaps.length} part${gaps.length > 1 ? 's' : ''} (${gaps.slice(0, 3).join(', ')}${gaps.length > 3 ? '…' : ''}) not found — drop the other .zip parts to add them`, 'upload'), 2500)
       } catch (e) {
         console.error(e)
         setError(`Couldn’t read that file (${e instanceof Error ? e.message : String(e)}). Is it a Google Takeout .zip, .csv or .html?`)

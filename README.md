@@ -17,8 +17,10 @@ your complete comment history, including replies and live chat.
 1. Open [takeout.google.com](https://takeout.google.com/settings/takeout/custom/youtube). YouTube is
    pre-selected.
 2. Under "All YouTube data included", keep only **comments** (and **live chats** if you want).
-3. Export, download the `.zip`, and drop it on Echoes. You can also drop `comments.csv`, or
-   `my-comments.html` from older exports.
+3. Export, download the `.zip`, and drop it on Echoes. If Google split the export into several
+   parts, drop them all at once. `.tgz` exports, an extracted `Takeout` folder, or the comment
+   `.csv` / `.html` files on their own work too, in any export language (`comments.csv`,
+   `commenti(3).csv`, `Kommentare.csv`…): files are recognised by their contents, not their names.
 
 No export yet? Click **Explore a demo**.
 
