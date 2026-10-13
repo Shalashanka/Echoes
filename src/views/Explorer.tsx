@@ -429,7 +429,7 @@ function VideoTile({ id, n, last, onPick, i }: { id: string; n: number; last: nu
       </div>
       <div className="vtile-title">{m?.title || (m?.missing ? 'Unavailable video' : <span className="skeleton line" />)}</div>
       <div className="vtile-sub">
-        {m?.author ? `${m.author} · ` : ''}last {relTime(last)}
+        {m?.author ? `${m.author} · ` : ''}{relTime(last)}
       </div>
     </motion.button>
   )
